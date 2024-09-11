@@ -26,19 +26,22 @@
 #include "SoapyFileSDR.hpp"
 #include <algorithm>
 #include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-#define MAX_FREQUENCY 10000000000
 
 SoapyFileSDR::SoapyFileSDR(const SoapySDR::Kwargs &args) : fifo_path("/tmp/file_sdr"),
-                                                           sampleRate(2048000),
-                                                           centerFrequency(100000000),
-                                                           bandwidth(0),
-                                                           numBuffers(DEFAULT_NUM_BUFFERS),
+                                                           input_fd(-1),
+                                                           sampleRate(0),
+                                                           centerFrequency(0),
                                                            bufferLength(DEFAULT_BUFFER_LENGTH)
-                                                 
+
 {
-    for(const auto& arg : args) {
-        if (arg.first == "fifo") {
+    for (const auto &arg : args)
+    {
+        if (arg.first == "fifo")
+        {
             this->writeSetting(arg.first, arg.second);
         }
     }
@@ -47,8 +50,10 @@ SoapyFileSDR::SoapyFileSDR(const SoapySDR::Kwargs &args) : fifo_path("/tmp/file_
 
 SoapyFileSDR::~SoapyFileSDR(void)
 {
-    // cleanup device handles
-    //  ...
+    if (this->input_fd > 0) {
+        close(this->input_fd);
+        this->input_fd = -1;
+    }
 }
 
 /*******************************************************************
@@ -163,30 +168,6 @@ std::vector<double> SoapyFileSDR::listSampleRates(const int direction, const siz
 }
 
 SoapySDR::RangeList SoapyFileSDR::getSampleRateRange(const int direction, const size_t channel) const
-{
-    SoapySDR::RangeList results;
-    return results;
-}
-
-void SoapyFileSDR::setBandwidth(const int direction, const size_t channel, const double bw)
-{
-    bandwidth = bw;
-}
-
-double SoapyFileSDR::getBandwidth(const int direction, const size_t channel) const
-{
-    if (bandwidth == 0) // auto / full bandwidth
-        return sampleRate;
-    return bandwidth;
-}
-
-std::vector<double> SoapyFileSDR::listBandwidths(const int direction, const size_t channel) const
-{
-    std::vector<double> results;
-    return results;
-}
-
-SoapySDR::RangeList SoapyFileSDR::getBandwidthRange(const int direction, const size_t channel) const
 {
     SoapySDR::RangeList results;
     return results;

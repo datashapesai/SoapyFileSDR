@@ -36,7 +36,7 @@
 
 #define DEFAULT_NUM_BUFFERS 1
 #define BYTES_PER_SAMPLE 4
-#define DEFAULT_BUFFER_LENGTH (BYTES_PER_SAMPLE * 1024)
+#define DEFAULT_BUFFER_LENGTH 1024
 
 class SoapyFileSDR: public SoapySDR::Device
 {
@@ -128,15 +128,6 @@ public:
 
     SoapySDR::RangeList getSampleRateRange(const int direction, const size_t channel) const;
 
-    void setBandwidth(const int direction, const size_t channel, const double bw);
-
-    double getBandwidth(const int direction, const size_t channel) const;
-
-    std::vector<double> listBandwidths(const int direction, const size_t channel) const;
-
-    SoapySDR::RangeList getBandwidthRange(const int direction, const size_t channel) const;
-
-
     /*******************************************************************
      * Settings API
      ******************************************************************/
@@ -150,7 +141,8 @@ public:
 private:
     // named pipe file path
     std::string fifo_path;
+    int input_fd;
     //cached settings
-    uint32_t sampleRate, centerFrequency, bandwidth;
-    size_t numBuffers, bufferLength;
+    uint32_t sampleRate, centerFrequency;
+    size_t bufferLength;
 };
