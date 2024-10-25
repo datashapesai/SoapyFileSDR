@@ -33,6 +33,7 @@
 #include <condition_variable>
 #include <atomic>
 #include <string>
+#include <cstring>
 
 #define DEFAULT_NUM_BUFFERS 1
 #define BYTES_PER_SAMPLE 4
